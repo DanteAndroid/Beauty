@@ -64,10 +64,8 @@ public abstract class PictureFragment extends RecyclerFragment {
         context = (BaseActivity) getActivity();
         layoutManager = new WrapContentLinearLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-
         adapter = new PictureAdapter(initAdapterLayout(), this);
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
-        adapter.disableLoadMoreIfNotFullPage(recyclerView);
         recyclerView.setAdapter(adapter);
         RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
         if (animator instanceof SimpleItemAnimator) {
@@ -141,21 +139,25 @@ public abstract class PictureFragment extends RecyclerFragment {
         if (SpUtil.getBoolean(SettingFragment.SECRET_MODE)) {
             return;
         }
-        final FloatingActionButton button = ((MainActivity) getActivity()).fab;
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (button.isShown()) {
-                    if (dy > 20) {
-                        button.hide();
-                    }
-                } else {
-                    if (dy < -20) {
-                        button.show();
+        if (getActivity() != null) {
+            final FloatingActionButton button;
+            button = ((MainActivity) getActivity()).fab;
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    if (button.isShown()) {
+                        if (dy > 20) {
+                            button.hide();
+                        }
+                    } else {
+                        if (dy < -20) {
+                            button.show();
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
+
     }
 
     @Override

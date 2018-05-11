@@ -9,6 +9,9 @@
             android:id="@+id/nav_a"
             android:title="@string/nav_a_zone"/>
         <item
+            android:id="@+id/nav_mz"
+            android:title="@string/nav_mz"/>
+        <item
             android:id="@+id/nav_favorite"
             android:title="@string/favorite"/>
 

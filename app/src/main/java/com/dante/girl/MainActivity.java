@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import com.blankj.utilcode.utils.BarUtils;
 import com.blankj.utilcode.utils.ToastUtils;
 import com.dante.girl.base.BaseActivity;
+import com.dante.girl.base.Constants;
 import com.dante.girl.helper.Updater;
 import com.dante.girl.lib.PopupDialogActivity;
 import com.dante.girl.model.DataBase;
@@ -58,6 +59,7 @@ import static com.dante.girl.net.API.TYPE_A_ANIME;
 import static com.dante.girl.net.API.TYPE_A_FULI;
 import static com.dante.girl.net.API.TYPE_A_HENTAI;
 import static com.dante.girl.net.API.TYPE_A_UNIFORM;
+import static com.dante.girl.net.API.TYPE_A_YSJ;
 import static com.dante.girl.net.API.TYPE_A_ZATU;
 import static com.dante.girl.net.API.TYPE_DB_BREAST;
 import static com.dante.girl.net.API.TYPE_DB_BUTT;
@@ -65,6 +67,11 @@ import static com.dante.girl.net.API.TYPE_DB_LEG;
 import static com.dante.girl.net.API.TYPE_DB_RANK;
 import static com.dante.girl.net.API.TYPE_DB_SILK;
 import static com.dante.girl.net.API.TYPE_GANK;
+import static com.dante.girl.net.API.TYPE_HIDE;
+import static com.dante.girl.net.API.TYPE_MZ_INNOCENT;
+import static com.dante.girl.net.API.TYPE_MZ_JAPAN;
+import static com.dante.girl.net.API.TYPE_MZ_SEXY;
+import static com.dante.girl.net.API.TYPE_MZ_TAIWAN;
 import static com.dante.girl.utils.AppUtil.donate;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -197,7 +204,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             String[] titles, types;
             fragmentSparseArray = new SparseArray<>();
             String[] all = getResources().getStringArray(R.array.db_titles);
-
 //            secretMode = true;
             Log.d(TAG, "initFragments: secret " + secretMode + " " + SpUtil.getString("deviceId"));
             if (secretMode) {
@@ -205,15 +211,33 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 titles = all;
                 types = new String[]{TYPE_GANK, TYPE_DB_RANK, TYPE_DB_BREAST, TYPE_DB_BUTT, TYPE_DB_LEG, TYPE_DB_SILK};
             } else {
-                titles = new String[]{all[0]};
-                types = new String[]{TYPE_GANK};
+                titles = new String[]{all[0], getString(R.string.hide)};
+                types = new String[]{TYPE_GANK, TYPE_HIDE};
             }
             fragmentSparseArray.put(R.id.nav_beauty, MainTabsFragment.newInstance(titles, types));
 
             //二次元
-            titles = getResources().getStringArray(R.array.a_titles);
-            types = new String[]{TYPE_A_ANIME, TYPE_A_FULI, TYPE_A_HENTAI, TYPE_A_UNIFORM, TYPE_A_ZATU};
+            all = getResources().getStringArray(R.array.a_titles);
+            if (secretMode) {
+                titles = all;
+                types = new String[]{TYPE_A_ANIME, TYPE_A_FULI, TYPE_A_HENTAI, TYPE_A_UNIFORM, TYPE_A_ZATU, TYPE_A_YSJ};
+            } else {
+                titles = new String[]{all[0], getString(R.string.hide)};
+                types = new String[]{TYPE_A_ANIME, TYPE_HIDE};
+            }
             fragmentSparseArray.put(R.id.nav_a, MainTabsFragment.newInstance(titles, types));
+//妹子图
+            all = getResources().getStringArray(R.array.mz_titles);
+            if (secretMode) {
+                titles = all;
+                types = new String[]{TYPE_MZ_INNOCENT, TYPE_MZ_SEXY, TYPE_MZ_JAPAN, TYPE_MZ_TAIWAN};
+            } else {
+                titles = new String[]{all[0], getString(R.string.hide)};
+                types = new String[]{TYPE_MZ_INNOCENT, TYPE_HIDE};
+            }
+            fragmentSparseArray.put(R.id.nav_mz, MainTabsFragment.newInstance(titles, types));
+
+
             //favorite
             fragmentSparseArray.put(R.id.nav_favorite, new FavoriteFragment());
         }
@@ -257,7 +281,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 //                .apply();
 
         //load headerView's image
-        ImageView head = navView.getHeaderView(0).findViewById(R.id.headImage);
+        ImageView head = navView.getHeaderView(0).findViewById(R.id.headimage);
         Imager.load(this, R.drawable.head, head);
         head.setOnClickListener(new View.OnClickListener() {
             int index;
@@ -285,17 +309,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         Menu menu = navView.getMenu();
         menu.getItem(0).setChecked(true);
         menu.getItem(0).setIcon(new IconicsDrawable(this).
-                icon(GoogleMaterial.Icon.gmd_face)
+                icon(GoogleMaterial.Icon.gmd_home)
                 .color(ContextCompat.getColor(this, R.color.pink)));
 
         menu.getItem(1).setIcon(new IconicsDrawable(this)
-                .icon(GoogleMaterial.Icon.gmd_collections));
+                .icon(GoogleMaterial.Icon.gmd_border_color));
 
         menu.getItem(2).setIcon(new IconicsDrawable(this)
+                .icon(GoogleMaterial.Icon.gmd_face)
+                .color(Color.RED));
+        menu.getItem(3).setIcon(new IconicsDrawable(this)
                 .icon(GoogleMaterial.Icon.gmd_favorite)
                 .color(Color.RED));
 
-        Menu sub = menu.getItem(3).getSubMenu();
+        Menu sub = menu.getItem(4).getSubMenu();
         sub.getItem(0).setIcon(new IconicsDrawable(this)
                 .icon(GoogleMaterial.Icon.gmd_share)
                 .color(Color.DKGRAY));
@@ -359,8 +386,25 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onDestroy() {
         updater.release();
+        if (isMoreThanDaysOf(3) && SpUtil.getBoolean("regularly_clear")) {
+            DataBase.clearAllImages();
+            SpUtil.save(Constants.CLEAR_DATE, new Date().getTime());
+        }
         super.onDestroy();
     }
+
+    public boolean isMoreThanDaysOf(int days) {
+        long now = new Date().getTime();
+        if (SpUtil.getLong(Constants.CLEAR_DATE) <= 0) {
+            SpUtil.save(Constants.CLEAR_DATE, now);
+        }
+        return now - SpUtil.getLong(Constants.CLEAR_DATE) > days * 24 * millisOfHour();
+    }
+
+    public int millisOfHour() {
+        return 1000 * 60 * 60;
+    }
+
 
     Intent get(Class clz) {
         return new Intent(getApplicationContext(), clz);
@@ -369,7 +413,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public void changeDrawer(boolean enable) {
         drawerLayout.setDrawerLockMode(enable ?
                 DrawerLayout.LOCK_MODE_UNLOCKED : LOCK_MODE_LOCKED_CLOSED);
-
     }
 
 }

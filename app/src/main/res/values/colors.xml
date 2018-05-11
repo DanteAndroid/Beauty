@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FF5722</color>
-    <color name="colorPrimaryDark">#E64A19</color>
-    <color name="colorPrimaryLight">#FFCCBC</color>
-    <color name="colorAccent">#8BC34A</color>
+    <color name="colorPrimary">#4CAF50</color>
+    <color name="colorPrimaryDark">#388E3C</color>
+    <color name="colorPrimaryLight">#C8E6C9</color>
+    <color name="colorAccent">#FF5722</color>
     <color name="halfer_transparent">#66000000</color>
     <color name="dark_transparent">#ba000000</color>
     <color name="divider_gray">#BDBDBD</color>
@@ -13,7 +13,6 @@
     <color name="pink">#F06292</color>
     <color name="black_overlay">#66000000</color>
     <color name="black_back">#131313</color>
-    <color name="black_87pc">#DD000000</color>
     <color name="grey">#faf2f2</color>
 
 </resources>

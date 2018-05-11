@@ -76,6 +76,8 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
             SplashActivity.updateSplash((String) o, true);
             return true;
         });
+
+
         about.setOnPreferenceClickListener(preference -> {
             new RxPermissions(getActivity()).request(Manifest.permission.READ_PHONE_STATE)
                     .subscribeOn(Schedulers.io())
@@ -182,7 +184,6 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 
     private boolean clearCache() {
         DataBase.clearAllImages();
-//        SpUtil.clear();
         return CleanUtils.cleanInternalCache();
     }
 

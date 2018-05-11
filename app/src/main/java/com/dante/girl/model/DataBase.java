@@ -1,8 +1,6 @@
 package com.dante.girl.model;
 
 
-import android.util.Log;
-
 import com.dante.girl.base.Constants;
 import com.dante.girl.net.API;
 import com.dante.girl.utils.SpUtil;
@@ -60,7 +58,6 @@ public class DataBase {
         if (deviceId.isEmpty()) {
             return false;
         }
-        Log.d("test", "secrete isVIP: " + SpUtil.getString("vip"));
         return SpUtil.getString("vip").contains(deviceId);
     }
 

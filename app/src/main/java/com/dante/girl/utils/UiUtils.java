@@ -4,13 +4,12 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 /**
  * Util to show hint such as snackBar or dialog.
  */
 public class UiUtils{
-
+    private static final String TAG = "UiUtils";
     public static void showSnack(View rootView, int textId) {
         if (null != rootView) {
             Snackbar.make(rootView, textId, Snackbar.LENGTH_SHORT).show();

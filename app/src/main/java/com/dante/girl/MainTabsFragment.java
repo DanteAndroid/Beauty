@@ -56,7 +56,11 @@ public class MainTabsFragment extends BaseFragment {
         adapter = new TabPagerAdapter(getChildFragmentManager());
         initFragments();
         pager.setAdapter(adapter);
-        tabs.setTabMode(ScreenUtils.isLandscape() ? TabLayout.MODE_FIXED : TabLayout.MODE_SCROLLABLE);
+        if (ScreenUtils.isLandscape() || fragments.size() < 5) {
+            tabs.setTabMode(TabLayout.MODE_FIXED);
+        } else {
+            tabs.setTabMode(TabLayout.MODE_SCROLLABLE);
+        }
         tabs.setupWithViewPager(pager);
     }
 

@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.request.target.SizeReadyCallback;
@@ -36,6 +35,7 @@ public class Image extends RealmObject {
     //A区的图片所在的网址
     public String referer = "";
     public boolean big;
+    public int totalPage;
 
     public Image(String url) {
         this.url = url;
@@ -66,19 +66,29 @@ public class Image extends RealmObject {
 
     public static void prefetch(Fragment context, final Image image, String type, SizeReadyCallback callback) {
         image.setType(type);
-        Glide.with(context).load(image.url)
-                .preload().getSize(callback);
+        Glide.with(context)
+                .load(image.url)
+                .preload()
+                .getSize(callback);
     }
 
     public static Bitmap getBitmap(Fragment context, Image image) throws InterruptedException, ExecutionException {
         GlideUrl glideUrl = new GlideUrl(image.url, new LazyHeaders.Builder()
                 .addHeader("Referer", image.referer)
                 .addHeader("User-Agent", NetService.AGENT).build());
-        return Glide.with(context).load(glideUrl)
+        return Glide.with(context)
                 .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                .load(glideUrl)
+                .submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .get();
+    }
+
+    public int getTotalPage() {
+        return totalPage;
+    }
+
+    public void setTotalPage(int totalPage) {
+        this.totalPage = totalPage;
     }
 
     public void setReferer(String referer) {

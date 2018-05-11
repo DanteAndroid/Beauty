@@ -9,7 +9,7 @@ import rx.Observable;
  * Created by yons on 16/12/16.
  */
 
-public interface AApi {
+public interface PicturePostApi {
     //Post示例  http://www.apic.in/anime/33089.htm
     @GET("{type}/page/{page}/")
     Observable<ResponseBody> getPosts(@Path("type") String type, @Path("page") int page);

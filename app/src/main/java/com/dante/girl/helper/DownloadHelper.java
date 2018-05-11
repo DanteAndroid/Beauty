@@ -20,12 +20,12 @@ import com.dante.girl.base.App;
 
 import java.io.File;
 
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 /**
  * Download and install apk file.
  */
 public class DownloadHelper {
+    private static final String TAG = "DownloadHelper";
     private BroadcastReceiver receiver;
     private String url;
     private String apkName;

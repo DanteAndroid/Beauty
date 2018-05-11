@@ -18,13 +18,16 @@
         <ImageView
             android:id="@+id/picture"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="230dp"
             android:scaleType="centerCrop"
             tools:ignore="ContentDescription"/>
+
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:padding="5dp"
             android:textColor="@color/grey"
             android:visibility="invisible"

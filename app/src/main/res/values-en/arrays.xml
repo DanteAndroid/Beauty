@@ -28,6 +28,12 @@
         <item name="a_hentai">Hentai</item>
         <item name="a_uniform">Uniform</item>
         <item name="a_zatu">Zatu</item>
+        <item name="a_zatu">Yusanjia</item>
     </string-array>
-
+    <string-array name="mz_titles">
+        <item name="mz_qc">Pure</item>
+        <item name="mz_sexy">Sexy</item>
+        <item name="mz_jp">Japan</item>
+        <item name="mz_tw">Taiwan</item>
+    </string-array>
 </resources>

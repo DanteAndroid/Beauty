@@ -71,13 +71,15 @@
     <string name="deep_clean">深度清理</string>
     <string name="app_info">应用信息</string>
     <string name="app_name">五次元妹子</string>
-    <string name="nav_a_zone">二次元</string>
-    <string name="nav_beauty">妹子</string>
+    <string name="nav_a_zone">二次元图区</string>
+    <string name="nav_beauty">Gank 妹子</string>
     <string name="favorite">我的收藏</string>
     <string name="images_empty">啊哦，没有内容，赶快去收藏吧~</string>
     <string name="set_like_download">收藏时保存图片</string>
     <string name="empty_content">啥也没有</string>
-    <string name="thanks_for_donation">加入VIP后可以开启隐藏福利图区哦~\n（点击APP的关于——设备标识，通过支付宝转账5RMB，留言设备标识即可）
+    <string name="thanks_for_donation">成为VIP后可以开启更多福利图区（6元）\n\n为什么要捐赠？\n- 服务器运行需要成本\n-
+        开发app耗费开发者的时间和精力\n-
+        您的捐赠会让app变得更好用
     </string>
     <string name="transition_morph_view" translatable="false">morph_view_transition</string>
     <string name="donate">捐贈</string>
@@ -99,13 +101,19 @@
     <string name="retry">不信邪</string>
     <string name="picture_load_fail">图片被封印了，无法加载</string>
     <string name="deviceid">设备标识</string>
-    <string name="copy">点击复制后通过捐赠发送给作者即可开启隐藏模式</string>
+    <string name="copy">点击复制后，转账时备注设备标识，捐赠完毕等待一段时间即可开启隐藏模式</string>
     <string name="permission_statement">拒绝电话权限将无法获取设备标识以开启隐藏图区（需要捐赠）</string>
-    <string name="device_id_copied">您的设备标识已复制，请通过转账留言发送给作者</string>
+    <string name="device_id_copied">设备标识已复制，请转账6元，在备注粘贴标识，捐赠完毕请耐心等待~</string>
     <string name="go_market">去市场</string>
     <string name="thanks_for_feedback">感谢您的反馈</string>
     <string name="you_are_vip">恭喜，您已经是VIP用户，再次感谢支持！</string>
     <string name="head_view_hint">干嘛戳人家屁股啦</string>
-
+    <string name="nav_mz">妹子图站</string>
+    <string name="device_id_uncopied">设备标识为空，请检查是否允许了电话权限</string>
+    <string name="regularly_clear">定期清理</string>
+    <string name="regularly_clear_summary">每隔三天清理一次图片缓存</string>
+    <string name="no_picture_maybe_need_login">无法解析图片，可能因为需要登录</string>
+    <string name="hide">隐藏图区</string>
+    <string name="type_hide_hint">大量隐藏图区捐赠后可见</string>
 
 </resources>

@@ -65,8 +65,8 @@
     <string name="app_info">About this app</string>
     <string name="feedback_description">Any idea or advice would be appreciated.</string>
     <string name="donate">Donate</string>
-    <string name="nav_a_zone">Anime</string>
-    <string name="nav_beauty">Beauties</string>
+    <string name="nav_a_zone">Anime zone</string>
+    <string name="nav_beauty">Gank beauties</string>
 
     <string name="empty_content">Nothing here :P</string>
     <string name="favorite">My Collections</string>
@@ -92,14 +92,27 @@
     <string name="dont_hint">No more hint</string>
     <string name="retry">retry</string>
     <string name="picture_load_fail">Can\'t load the picture</string>
-    <string name="copy">Click to copy then send to author to open secret mode</string>
+    <string name="copy">Click to copy, leave your deviceId when transferring, wait for a period of
+        time to open secret mode
+    </string>
     <string name="deviceid">DeviceId</string>
     <string name="permission_statement">Phone permission required to open secret mode</string>
-    <string name="device_id_copied">Device Id copied</string>
-    <string name="thanks_for_donation">Join in VIP to open secret picture section!
+    <string name="device_id_copied">Device Id copied, leave your deviceId when transferring</string>
+    <string name="thanks_for_donation">Join in VIP to open secret picture section (8RMB)\n\n (Why
+        donate?\n1. The server costs money.\n2. Developer spends spare time to make this app.\n3.
+        Your donation will make it better and better.
     </string>
     <string name="go_market">Go App Store</string>
     <string name="thanks_for_feedback">Thanks for your feedback</string>
     <string name="you_are_vip">You are VIP already, thanks again!</string>
     <string name="head_view_hint">Don\'t fucking touch my ass</string>
+    <string name="nav_mz">Girls Picture</string>
+    <string name="device_id_uncopied">Device id is empty, please check if Phone permission is
+        allowed
+    </string>
+    <string name="regularly_clear">Regularly clear</string>
+    <string name="regularly_clear_summary">Clear picture cache every 3 days</string>
+    <string name="no_picture_maybe_need_login">Uable to parse pictures, login may be needed</string>
+    <string name="hide">Hidden zone</string>
+    <string name="type_hide_hint">Visible after donation</string>
 </resources>

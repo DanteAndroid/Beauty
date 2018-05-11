@@ -43,7 +43,7 @@ public class DateUtil {
      * @return "yyyyMMdd" String
      */
     public static String parseStandardDate(Date date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         formatter.setLenient(false);
         return formatter.format(date);
     }
@@ -55,7 +55,7 @@ public class DateUtil {
      * @return Date object
      */
     public static Date parseStandardDate(String date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         formatter.setLenient(false);
         try {
             return formatter.parse(date);

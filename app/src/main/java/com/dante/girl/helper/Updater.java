@@ -3,7 +3,6 @@ package com.dante.girl.helper;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.util.Log;
 
 import com.blankj.utilcode.utils.EncryptUtils;
 import com.blankj.utilcode.utils.PhoneUtils;
@@ -78,7 +77,6 @@ public class Updater {
 
         NetService.getInstance(API.GITHUB_RAW).getAppApi().getAppInfo()
                 .filter(appInfo -> {
-                    Log.d(TAG, "check: " + appInfo.toString());
                     SpUtil.save("vip", Arrays.toString(appInfo.getVip().toArray()));
                     return appInfo.getVersionCode() > BuildConfig.VERSION_CODE;//版本有更新
                 })

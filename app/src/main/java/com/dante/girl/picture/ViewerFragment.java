@@ -6,14 +6,18 @@ import android.app.AlertDialog;
 import android.app.WallpaperManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
+import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 
-import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.dante.girl.R;
 import com.dante.girl.base.BaseFragment;
 import com.dante.girl.base.Constants;
@@ -45,11 +49,13 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
     public static final String DONT_HINT = "dont_hint";
     public static final String HINT = "first_hint";
     private static final String TAG = "test";
-    @BindView(R.id.headImage)
+    @BindView(R.id.image)
     TouchImageView imageView;
     CompositeSubscription tasks = new CompositeSubscription();
     @BindView(R.id.likeBtn)
     LikeButton likeBtn;
+    @BindView(R.id.progress)
+    ProgressBar progress;
     private ViewerActivity context;
     private Bitmap bitmap;
     private String url;
@@ -99,24 +105,18 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
 
 
     private void load() {
-        log("load");
+        Log.d(TAG, "load: " + url);
         Imager.loadDefer(this, image, new SimpleTarget<Bitmap>() {
-
             @Override
-            public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                imageView.setImageResource(R.drawable.error_holder);
-                UiUtils.showSnackLong(imageView, R.string.picture_load_fail, R.string.retry,
-                        v -> load());
-            }
-
-            @Override
-            public void onResourceReady(Bitmap b, GlideAnimation<? super Bitmap> arg1) {
-                log("load" + b.getByteCount());
-                bitmap = b;
-                imageView.setImageBitmap(b);
+            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                log("load" + url + " byte counts" + resource.getByteCount());
+                bitmap = resource;
+                progress.setVisibility(View.GONE);
+                imageView.setImageBitmap(resource);
                 context.supportStartPostponedEnterTransition();
                 likeBtn.animate().setDuration(400).scaleY(1).scaleX(1).start();
             }
+
         });
     }
 
@@ -237,6 +237,7 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
     public void onDestroyView() {
         super.onDestroyView();
         tasks.unsubscribe();
+        Glide.with(this).clear(imageView);
     }
 
 }

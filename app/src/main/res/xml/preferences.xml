@@ -14,6 +14,11 @@
             android:summary="@string/set_original_splash"
             android:title="@string/original_splash"/>
         <SwitchPreference
+            android:defaultValue="false"
+            android:key="regularly_clear"
+            android:summary="@string/regularly_clear_summary"
+            android:title="@string/regularly_clear"/>
+        <SwitchPreference
             android:defaultValue="true"
             android:key="like_download"
             android:title="@string/set_like_download"/>

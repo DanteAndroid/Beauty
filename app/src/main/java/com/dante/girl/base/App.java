@@ -7,6 +7,7 @@ import android.content.Context;
 import com.blankj.utilcode.utils.Utils;
 import com.bugtags.library.Bugtags;
 import com.dante.girl.BuildConfig;
+import com.github.anrwatchdog.ANRWatchDog;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -29,6 +30,10 @@ public class App extends Application {
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
+        new ANRWatchDog().start();
+        new ANRWatchDog().setANRListener(error -> {
+            Bugtags.sendException(error.getCause());
+        }).start();
         Utils.init(this);
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());

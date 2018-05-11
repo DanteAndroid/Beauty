@@ -53,11 +53,15 @@ public class AppUtil {
 
 
     public static void donate(Activity activity) {
+        String deviceId = SpUtil.getString("deviceId");
+        ClipboardUtils.copyText(deviceId);
         if (AlipayZeroSdk.hasInstalledAlipayClient(activity.getApplicationContext())) {
-            String deviceId = SpUtil.getString("deviceId");
-            ClipboardUtils.copyText(deviceId);
-            ToastUtils.showShortToast(R.string.device_id_copied);
-            new Handler().postDelayed(() -> AlipayZeroSdk.startAlipayClient(activity, Constants.ALI_PAY), 500);
+            if (deviceId.isEmpty()) {
+                ToastUtils.showShortToast(R.string.device_id_uncopied);
+            } else {
+                ToastUtils.showLongToast(R.string.device_id_copied);
+                new Handler().postDelayed(() -> AlipayZeroSdk.startAlipayClient(activity, Constants.ALI_PAY), 500);
+            }
         } else {
             ToastUtils.showShortToast(R.string.alipay_not_found);
         }

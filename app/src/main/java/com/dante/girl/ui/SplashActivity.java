@@ -35,7 +35,7 @@ public class SplashActivity extends AppCompatActivity {
 
     public static void updateSplash(String type, boolean force) {
         Date now = new Date();
-        boolean needUpdate = (now.getTime() - SpUtil.getLong(Constants.DATE)) > 10 * 60 * 1000;
+        boolean needUpdate = lastUpdateIsTenMinBefore();
         if (needUpdate || force) {
             String url = DataBase.getRandomImage(type);
             if (TextUtils.isEmpty(url)) {
@@ -45,6 +45,12 @@ public class SplashActivity extends AppCompatActivity {
             SpUtil.save(SPLASH, url);
         }
     }
+
+    public static boolean lastUpdateIsTenMinBefore() {
+        Date now = new Date();
+        return (now.getTime() - SpUtil.getLong(Constants.DATE)) > 10 * 60 * 1000;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,13 +76,13 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(splash);
         String url = SpUtil.getString(SPLASH);
         if (url.isEmpty()) {
-            Glide.with(this).load(R.drawable.splash).crossFade().into(splash);
+            Glide.with(this).load(R.drawable.splash).into(splash);
             updateSplash(type, false);
             startAppDelay(SPLASH_DURATION_SHORT);
         } else {
             Image image = DataBase.findImageByUrl(url);
             if (image == null) {
-                Glide.with(this).load(R.drawable.splash).crossFade().into(splash);
+                Glide.with(this).load(R.drawable.splash).into(splash);
             } else {
                 Imager.loadWithHeader(this, image, splash);
             }

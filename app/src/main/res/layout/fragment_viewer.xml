@@ -5,7 +5,7 @@
              android:layout_height="match_parent">
 
     <com.dante.girl.lib.TouchImageView
-        android:id="@+id/headImage"
+        android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
@@ -21,4 +21,9 @@
         android:scaleY="0"
         app:icon_size="36dp"
         app:icon_type="heart"/>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:layout_gravity="center"/>
 </FrameLayout>

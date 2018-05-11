@@ -21,6 +21,7 @@ public class Constants {
     public static final String FAVORITE = "favorite";
     public static final String DANTE = "dante";
     public static final String IMAGE = "image";
+    public static final String CLEAR_DATE = "clear_date";
 
     /**
 

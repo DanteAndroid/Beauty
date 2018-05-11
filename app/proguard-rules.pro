@@ -79,17 +79,26 @@
 -keep class * implements com.google.gson.TypeAdapterFactory
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
-##End: configuration for Gson
+# End: configuration for Gson
 
-## Solove NullPointerException by Gson
+#  Solove NullPointerException by Gson
 -keep class com.dante.girl.model.** { *; }
 -keep class android.support.v7.widget.ShareActionProvider { *; }
 -keep class com.dante.girl.net.** { *; }
 
-## retrolambda
+# retrolambda
 -dontwarn java.lang.invoke.*
 
-## AndroidUtilCode
+# AndroidUtilCode
 -keep class com.blankj.utilcode.** { *; }
 -keepclassmembers class com.blankj.utilcode.** { *; }
 -dontwarn com.blankj.utilcode.**
+
+# Glide
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}
+

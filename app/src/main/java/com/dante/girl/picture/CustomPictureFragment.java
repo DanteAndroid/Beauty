@@ -1,12 +1,16 @@
 package com.dante.girl.picture;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
+import com.chad.library.adapter.base.loadmore.LoadMoreView;
 import com.dante.girl.MainActivity;
 import com.dante.girl.R;
 import com.dante.girl.base.Constants;
@@ -26,18 +30,22 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
-import static android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED;
-import static android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL;
 import static com.dante.girl.net.API.TYPE_A_ANIME;
 import static com.dante.girl.net.API.TYPE_A_FULI;
 import static com.dante.girl.net.API.TYPE_A_HENTAI;
 import static com.dante.girl.net.API.TYPE_A_UNIFORM;
+import static com.dante.girl.net.API.TYPE_A_YSJ;
 import static com.dante.girl.net.API.TYPE_A_ZATU;
 import static com.dante.girl.net.API.TYPE_DB_BREAST;
 import static com.dante.girl.net.API.TYPE_DB_BUTT;
 import static com.dante.girl.net.API.TYPE_DB_LEG;
 import static com.dante.girl.net.API.TYPE_DB_RANK;
 import static com.dante.girl.net.API.TYPE_DB_SILK;
+import static com.dante.girl.net.API.TYPE_HIDE;
+import static com.dante.girl.net.API.TYPE_MZ_INNOCENT;
+import static com.dante.girl.net.API.TYPE_MZ_JAPAN;
+import static com.dante.girl.net.API.TYPE_MZ_SEXY;
+import static com.dante.girl.net.API.TYPE_MZ_TAIWAN;
 
 /**
  * Custom appearance of picture list fragment
@@ -46,14 +54,15 @@ import static com.dante.girl.net.API.TYPE_DB_SILK;
 public class CustomPictureFragment extends PictureFragment {
     private static final String TAG = "CustomPictureFragment";
     private static final int BUFFER_SIZE = 4;
-    boolean inAPost;
-    boolean isA;
+    boolean inPicturePost;
+    boolean isPostSite;
     private boolean firstPage;
     private int size;
     private int old;
     private int error;
     private boolean isGank;
     private boolean isDB;
+    private boolean isMZ;
 
     public static CustomPictureFragment newInstance(String type) {
         Bundle args = new Bundle();
@@ -65,7 +74,7 @@ public class CustomPictureFragment extends PictureFragment {
 
     public void addInfo(String info) {
         this.info = info;
-        inAPost = true;
+        inPicturePost = true;
     }
 
     @Override
@@ -76,7 +85,10 @@ public class CustomPictureFragment extends PictureFragment {
 
     @Override
     protected void onImageClicked(View view, int position) {
-        if (isA && !inAPost) {
+        if (isFetching) {
+            return;
+        }
+        if (isPostSite && !inPicturePost) {
             startPost(getImage(position));
             return;
         }
@@ -87,16 +99,28 @@ public class CustomPictureFragment extends PictureFragment {
     protected int initAdapterLayout() {
         int layout = R.layout.picture_item;
         switch (baseType) {
+            case TYPE_MZ_INNOCENT:
+            case TYPE_MZ_JAPAN:
+            case TYPE_MZ_SEXY:
+            case TYPE_MZ_TAIWAN:
+                isPostSite = true;
+                layout = R.layout.post_item;
+                if (inPicturePost) {
+                    layout = R.layout.picture_item_fixed;
+                }
+                break;
             case TYPE_A_ANIME:
             case TYPE_A_FULI:
             case TYPE_A_HENTAI:
             case TYPE_A_ZATU:
             case TYPE_A_UNIFORM:
-                isA = true;
-                layout = R.layout.post_item;
-                if (inAPost) {
-                    layout = R.layout.picture_item;
+            case TYPE_A_YSJ:
+                isPostSite = true;
+                layout = R.layout.post_item_a;
+                if (inPicturePost) {
+                    layout = R.layout.picture_item_fixed;
                 }
+                break;
         }
         return layout;
     }
@@ -107,8 +131,8 @@ public class CustomPictureFragment extends PictureFragment {
             Log.e(TAG, "fetch: isFetching. return");
             return;
         }
-        firstPage = page <= 1;
 
+        firstPage = page <= 1;
         DataFetcher fetcher;
         Observable<List<Image>> source;
         switch (baseType) {
@@ -128,11 +152,26 @@ public class CustomPictureFragment extends PictureFragment {
             case TYPE_A_HENTAI:
             case TYPE_A_ZATU:
             case TYPE_A_UNIFORM:
+            case TYPE_A_YSJ:
                 url = API.A_BASE;
                 fetcher = new DataFetcher(url, imageType, page);
-                source = inAPost ? fetcher.getPicturesOfPost(info) : fetcher.getAPosts();
+                source = inPicturePost ? fetcher.getPicturesOfPost(url, info) : fetcher.getPosts(url);
                 break;
-
+            case TYPE_MZ_INNOCENT:
+            case TYPE_MZ_JAPAN:
+            case TYPE_MZ_SEXY:
+            case TYPE_MZ_TAIWAN:
+                url = API.MZ_BASE;
+                isMZ = true;
+                fetcher = new DataFetcher(url, imageType, page);
+                Log.d(TAG, "fetch: " + inPicturePost);
+                source = inPicturePost ? fetcher.getPicturesOfPost(url, info) : fetcher.getPosts(url);
+                break;
+            case TYPE_HIDE:
+                source = Observable.empty();
+                adapter.bindToRecyclerView(recyclerView);
+                adapter.setEmptyView(R.layout.type_hide);
+                break;
             default://imageType = 0, 代表GANK
                 url = API.GANK;
                 isGank = true;
@@ -147,14 +186,21 @@ public class CustomPictureFragment extends PictureFragment {
     protected void fetchImages(final Observable<List<Image>> source) {
         subscription = source
                 .observeOn(Schedulers.io())
-                .filter(list -> list.size() > 0)
+                .filter(images -> {
+//                    if (inPicturePost && images.size() == 0) {
+//                        context.runOnUiThread(() -> {
+//                            UiUtils.showSnackLong(rootView, R.string.no_picture_maybe_need_login);
+//                            adapter.loadMoreEnd();
+//                        });
+//                    }
+                    return images.size() > 0;
+                })
                 .flatMap(Observable::from)
                 .map(image -> {
-                    if (!isA || inAPost) {
-                        //不是A区，需要预加载
+                    if ((isGank | isDB) && image.width == 0) {
                         try {
                             image = Image.getFixedImage(this, image, imageType);
-                            if (!isGank && !DataBase.hasImage(image.url)) {
+                            if (!isGank && !DataBase.hasImage(image.url) && image.publishedAt == null) {
                                 Date date = new Date();
                                 if (page <= 1) {
                                     //如果是刷新，则把新图片的日期都往前设10s
@@ -172,7 +218,7 @@ public class CustomPictureFragment extends PictureFragment {
                         } catch (ExecutionException | InterruptedException e) {
                             Log.d(TAG, "fetchImages: " + e.getMessage());
                         }
-                        if (inAPost) {
+                        if (inPicturePost) {
                             image.big = true;
                         }
                     }
@@ -182,6 +228,7 @@ public class CustomPictureFragment extends PictureFragment {
                 .compose(applySchedulers())
                 .subscribe(new Subscriber<List<Image>>() {
                     int oldSize;
+
                     @Override
                     public void onStart() {
                         oldSize = images.size();
@@ -190,7 +237,6 @@ public class CustomPictureFragment extends PictureFragment {
                     @Override
                     public void onCompleted() {
                         changeState(false);
-                        adapter.loadMoreComplete();
                         images = DataBase.findImages(realm, imageType);
                         int add = images.size() - oldSize;
                         if (add > 0) {
@@ -200,8 +246,9 @@ public class CustomPictureFragment extends PictureFragment {
                                 adapter.notifyItemRangeInserted(oldSize, add);
                             }
                         } else {
-                            if (page > 1 && inAPost) adapter.loadMoreEnd();
+                            if (page > 1 && inPicturePost) adapter.loadMoreEnd();
                         }
+                        adapter.loadMoreComplete();
                         page++;
                     }
 
@@ -209,7 +256,7 @@ public class CustomPictureFragment extends PictureFragment {
                     public void onError(Throwable e) {
                         changeState(false);
                         error++;
-                        if (page > 1 && images.size() > 3 && inAPost) {
+                        if (isMaxPage()) {
                             adapter.loadMoreEnd(true);
                         } else {
                             adapter.loadMoreFail();
@@ -233,7 +280,7 @@ public class CustomPictureFragment extends PictureFragment {
     @Override
     protected void onCreateView() {
         super.onCreateView();
-        if (isA) recyclerView.setBackgroundColor(getColor(R.color.black_back));
+        if (isPostSite) recyclerView.setBackgroundColor(getColor(R.color.black_back));
     }
 
 //    @Override
@@ -244,34 +291,39 @@ public class CustomPictureFragment extends PictureFragment {
 //        super.onDestroyView();
 //    }
 
+    public boolean isMaxPage() {
+        return !images.isEmpty() && page > images.first().totalPage && images.first().totalPage > 0;
+    }
+
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);//fragment被show或者hide时调用
         if (!hidden && context != null) {
             setupToolbar();
-            ((MainActivity) context).changeDrawer(!inAPost);
+            ((MainActivity) context).changeDrawer(!inPicturePost);
         }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        ((MainActivity) context).changeDrawer(!inAPost);
+        ((MainActivity) context).changeDrawer(!inPicturePost);
     }
 
     private void setupToolbar() {
         //在A区帖子中，改变toolbar的样式
         AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
-        if (inAPost) {
-            p.setScrollFlags(0);
+        p.setScrollFlags(0);
+        if (inPicturePost) {
             ((MainActivity) context).changeNavigator(false);
             context.setToolbarTitle(title);
         } else {
-            p.setScrollFlags(SCROLL_FLAG_SCROLL | SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
+//            p.setScrollFlags(SCROLL_FLAG_SCROLL | SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
             ((MainActivity) context).changeNavigator(true);
             context.setToolbarTitle(((MainActivity) context).getCurrentMenuTitle());
         }
         toolbar.setLayoutParams(p);
+        toolbar.setOnClickListener(v -> recyclerView.smoothScrollToPosition(0));
     }
 
     private void startPost(Image image) {
@@ -293,24 +345,62 @@ public class CustomPictureFragment extends PictureFragment {
         SpUtil.save(imageType + Constants.PAGE, page);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void initData() {
         super.initData();
         setupToolbar();
+        TransitionManager.beginDelayedTransition((ViewGroup) rootView);
+        if (isPostSite || inPicturePost) {
+            adapter.setLoadMoreView(new LoadMoreView() {
+                @Override
+                public int getLayoutId() {
+                    return R.layout.loading;
+                }
+
+                @Override
+                protected int getLoadingViewId() {
+                    return R.id.loading;
+                }
+
+                @Override
+                protected int getLoadFailViewId() {
+                    return R.id.loadFailed;
+                }
+
+                @Override
+                protected int getLoadEndViewId() {
+                    return R.id.loadEnd;
+                }
+            });
+        }
         page = SpUtil.getInt(imageType + Constants.PAGE, 1);
+        if (images.isEmpty()) {
+            fetch();
+            changeState(true);
+        }
+        setLoadMore();
+    }
+
+    @Override
+    public void changeState(boolean fetching) {
+        isFetching = fetching;
+        changeRefresh(isFetching);
+    }
+
+    private void setLoadMore() {
         adapter.setOnLoadMoreListener(() -> {
             if (isFetching) {
                 UiUtils.showSnack(rootView, R.string.is_loading);
                 return;
             }
-            fetch();
-            changeState(true);
+            if (isMaxPage()) {
+                adapter.loadMoreEnd();
+            } else {
+                fetch();
+                isFetching = true;
+            }
         }, recyclerView);
-        adapter.disableLoadMoreIfNotFullPage(recyclerView);
-        if (images.isEmpty()) {
-            fetch();
-            changeState(true);
-        }
     }
 
 //    @Override

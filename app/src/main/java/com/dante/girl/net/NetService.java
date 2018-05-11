@@ -37,7 +37,7 @@ public class NetService {
     private OkHttpClient client;
     private GankApi gankApi;
     private DBApi dbApi;
-    private AApi aApi;
+    private PicturePostApi picturePostApi;
     private AppApi appApi;
 
     public static NetService getInstance(String baseUrl) {
@@ -74,11 +74,10 @@ public class NetService {
         return dbApi;
     }
 
-    public AApi getaApi() {
-        if (aApi == null) {
-            aApi = createService(AApi.class);
-        }
-        return aApi;
+    public PicturePostApi getPicturePostApi() {
+        //每次都要创建新对象
+        picturePostApi = createService(PicturePostApi.class);
+        return picturePostApi;
     }
 
     public AppApi getAppApi() {

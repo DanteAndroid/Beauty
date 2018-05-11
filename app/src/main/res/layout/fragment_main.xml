@@ -9,8 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.dante.girl.MainTabsFragment"
+    tools:fragment="com.dante.girl.MainTabsFragment"
     tools:showIn="@layout/content_main">
-
 
 </RelativeLayout>

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
+import android.widget.FrameLayout;
 
 import com.dante.girl.R;
 import com.dante.girl.base.BaseFragment;
@@ -29,6 +30,8 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
     int firstPosition;      //first visible position
     Subscription subscription;
     CompositeSubscription compositeSubscription = new CompositeSubscription();
+    @BindView(R.id.progress)
+    FrameLayout progress;
 
     @Override
     protected int initLayoutId() {
@@ -91,6 +94,5 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
     public RecyclerView getRecyclerView() {
         return recyclerView;
     }
-
 
 }

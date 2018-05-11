@@ -10,6 +10,7 @@ public class API {
 
     //Gank
     public static final String TYPE_GANK = "0";
+    public static final String TYPE_HIDE = "hide";
     //豆瓣
     public static final String TYPE_DB_BREAST = "2";
     public static final String TYPE_DB_BUTT = "6";
@@ -21,14 +22,23 @@ public class API {
     public static final String TYPE_A_ANIME = "anime";
     public static final String TYPE_A_UNIFORM = "zhifu";
     public static final String TYPE_A_HENTAI = "hentai";
-    //    public static final String TYPE_A_YSJ = "yusanjia";
+    public static final String TYPE_A_YSJ = "yusanjia";
     public static final String TYPE_A_ZATU = "zatuji";
     public static final String TYPE_A_FULI = "fuli";
 
+
+    //MZ
+    public static final String TYPE_MZ_SEXY = "xinggan";
+    public static final String TYPE_MZ_INNOCENT = "mm";
+    public static final String TYPE_MZ_JAPAN = "japan";
+    public static final String TYPE_MZ_TAIWAN = "taiwan";
+
     //Base API
-    public static String GANK = "http://gank.io/api/";
-    public static String DB_BASE = "http://www.dbmeinv.com/dbgroup/";
-    public static String A_BASE = "http://www.acg.fi/";
+    public static final String GANK = "http://gank.io/api/";
+    public static final String DB_BASE = "http://www.dbmeinv.com/dbgroup/";
+    public static final String A_BASE = "http://www.acg.fi/";
+    public static final String MZ_BASE = "http://www.mzitu.com/";
+
 
     //H API
     public static String H_BASE = "http://bww.yakexi.biz/pw/";
