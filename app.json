@@ -1,9 +1,9 @@
 {
-	"lastest_version": "v1.2.5",
-	"lastest_version_code": 20,
-	"former_version": "v1.2.3",
+	"lastest_version": "v1.2.6",
+	"lastest_version_code": 21,
+	"former_version": "v1.2.5",
 	"forceUpdate": true,
-	"message": " -修复动漫图（因原网站更新）\n - 大幅度提高性能",
+	"message": " -迄今为止最稳定的版本（大概）\n - 优化细节界面",
 	"share_app_description": "这个软件不错，图片适合做壁纸。",
 	"apk_name":"app-armeabi-v7a-release.apk",
 	"vip":[ "67B6DF845280BEFA66729AAE3760D0CA", "75BF6E246958460F2F81E943B38E1EE7", "6579ECEFB2E8072093AA89EAE86D95A5"
