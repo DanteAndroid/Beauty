@@ -3,7 +3,7 @@
 	"lastest_version_code": 21,
 	"former_version": "v1.2.5",
 	"forceUpdate": true,
-	"announcement":"本版本更新了几个重要的自定义设置，请到设置里查看",
+	"announcement":"提示：\n\n本版本更新了几个重要的自定义设置，请到设置里查看",
 	"message": " -迄今为止最稳定的版本（大概）\n - 优化细节界面",
 	"share_app_description": "这个软件不错，图片适合做壁纸。",
 	"apk_name":"app-armeabi-v7a-release.apk",
