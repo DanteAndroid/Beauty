@@ -7,8 +7,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.transition.TransitionManager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.loadmore.LoadMoreView;
 import com.dante.girl.MainActivity;
@@ -21,6 +23,7 @@ import com.dante.girl.net.DataFetcher;
 import com.dante.girl.utils.SpUtil;
 import com.dante.girl.utils.UiUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -131,7 +134,6 @@ public class CustomPictureFragment extends PictureFragment {
             Log.e(TAG, "fetch: isFetching. return");
             return;
         }
-
         firstPage = page <= 1;
         DataFetcher fetcher;
         Observable<List<Image>> source;
@@ -143,7 +145,7 @@ public class CustomPictureFragment extends PictureFragment {
             case TYPE_DB_RANK:
                 isDB = true;
                 url = API.DB_BASE;
-                fetcher = new DataFetcher(url, imageType, page);
+                fetcher = new DataFetcher(url, imageType, refresh ? 1 : page);
                 source = fetcher.getDouban();
                 break;
 
@@ -154,7 +156,7 @@ public class CustomPictureFragment extends PictureFragment {
             case TYPE_A_UNIFORM:
             case TYPE_A_YSJ:
                 url = API.A_BASE;
-                fetcher = new DataFetcher(url, imageType, page);
+                fetcher = new DataFetcher(url, imageType, refresh ? 1 : page);
                 source = inPicturePost ? fetcher.getPicturesOfPost(url, info) : fetcher.getPosts(url);
                 break;
             case TYPE_MZ_INNOCENT:
@@ -163,19 +165,21 @@ public class CustomPictureFragment extends PictureFragment {
             case TYPE_MZ_TAIWAN:
                 url = API.MZ_BASE;
                 isMZ = true;
-                fetcher = new DataFetcher(url, imageType, page);
+                fetcher = new DataFetcher(url, imageType, refresh ? 1 : page);
                 Log.d(TAG, "fetch: " + inPicturePost);
                 source = inPicturePost ? fetcher.getPicturesOfPost(url, info) : fetcher.getPosts(url);
                 break;
             case TYPE_HIDE:
                 source = Observable.empty();
-                adapter.bindToRecyclerView(recyclerView);
-                adapter.setEmptyView(R.layout.type_hide);
+                TextView empty = new TextView(getActivity());
+                empty.setText(R.string.type_hide_hint);
+                empty.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
+                adapter.setEmptyView(empty);
                 break;
             default://imageType = 0, 代表GANK
                 url = API.GANK;
                 isGank = true;
-                fetcher = new DataFetcher(url, imageType, page);
+                fetcher = new DataFetcher(url, imageType, refresh ? 1 : page);
                 source = fetcher.getGank();
                 break;
         }
@@ -228,32 +232,59 @@ public class CustomPictureFragment extends PictureFragment {
                 .compose(applySchedulers())
                 .subscribe(new Subscriber<List<Image>>() {
                     int oldSize;
+                    List<Image> newData;
 
                     @Override
                     public void onStart() {
-                        oldSize = images.size();
+                        if (noCache) {
+                            newData = new ArrayList<>();
+                        } else {
+                            oldSize = images.size();
+                        }
                     }
 
                     @Override
                     public void onCompleted() {
                         changeState(false);
-                        images = DataBase.findImages(realm, imageType);
-                        int add = images.size() - oldSize;
-                        if (add > 0) {
-                            if (page == 1) {
-                                adapter.setNewData(images);
+                        if (noCache) {
+                            if (page > 1) {
+                                if (inPicturePost) adapter.loadMoreEnd();
                             } else {
-                                adapter.notifyItemRangeInserted(oldSize, add);
+                                log("onCompleted " + data.size() + " " + newData.size() + " " + getNewData(data, newData).size());
+                                newData = getNewData(data, newData);
+                                if (!newData.isEmpty()) {
+                                    adapter.addData(0, newData);
+                                }
                             }
                         } else {
-                            if (page > 1 && inPicturePost) adapter.loadMoreEnd();
+                            images = DataBase.findImages(realm, imageType);
+                            int add = images.size() - oldSize;
+                            if (add > 0) {
+                                if (page == 1) {
+                                    adapter.setNewData(images);
+                                } else {
+                                    adapter.notifyItemRangeInserted(oldSize, add);
+                                }
+                            } else {
+                                if (page > 1 && inPicturePost) adapter.loadMoreEnd();
+                            }
+                        }
+                        adapter.setEmptyView(R.layout.empty);
+                        if (inPicturePost) {
+                            adapter.getEmptyView().findViewById(R.id.empty).setBackgroundColor(getColor(android.R.color.black));
+                            TextView textView = adapter.getEmptyView().findViewById(R.id.hint);
+                            textView.setTextColor(getColor(android.R.color.secondary_text_dark));
+                        }
+                        if (!refresh) {
+                            page++;
                         }
                         adapter.loadMoreComplete();
-                        page++;
+                        if (refresh) refresh = false;
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        if (refresh) refresh = false;
                         changeState(false);
                         error++;
                         if (isMaxPage()) {
@@ -271,10 +302,36 @@ public class CustomPictureFragment extends PictureFragment {
 
                     @Override
                     public void onNext(List<Image> list) {
-                        DataBase.save(realm, list);
+                        if (noCache) {
+                            if (refresh) {
+                                newData.addAll(list);
+                            } else {
+                                adapter.addData(list);
+                            }
+                        } else {
+                            log(" save ");
+                            DataBase.save(realm, list);
+                        }
                     }
                 });
         compositeSubscription.add(subscription);
+    }
+
+    public List<Image> getNewData(List<Image> old, List<Image> list) {
+        if (old.isEmpty()) return list;
+        List<Image> newData = new ArrayList<>();
+        boolean contains = false;
+        for (Image image : list) {
+            for (int i = 0; i < old.size(); i++) {
+                if (old.get(i).url.equals(image.url)) {
+                    contains = true;
+                }
+            }
+            if (!contains) {
+                newData.add(image);
+            }
+        }
+        return newData;
     }
 
     @Override
@@ -292,6 +349,9 @@ public class CustomPictureFragment extends PictureFragment {
 //    }
 
     public boolean isMaxPage() {
+        if (noCache) {
+            return !data.isEmpty() && page > data.get(0).totalPage && data.get(0).totalPage > 0;
+        }
         return !images.isEmpty() && page > images.first().totalPage && images.first().totalPage > 0;
     }
 
@@ -342,7 +402,9 @@ public class CustomPictureFragment extends PictureFragment {
     @Override
     public void onStop() {
         super.onStop();
-        SpUtil.save(imageType + Constants.PAGE, page);
+        if (!noCache) {
+            SpUtil.save(imageType + Constants.PAGE, page);
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -374,10 +436,15 @@ public class CustomPictureFragment extends PictureFragment {
                 }
             });
         }
-        page = SpUtil.getInt(imageType + Constants.PAGE, 1);
-        if (images.isEmpty()) {
+        if (noCache) {
             fetch();
             changeState(true);
+        } else {
+            page = SpUtil.getInt(imageType + Constants.PAGE, 1);
+            if (images.isEmpty()) {
+                fetch();
+                changeState(true);
+            }
         }
         setLoadMore();
     }
@@ -390,16 +457,15 @@ public class CustomPictureFragment extends PictureFragment {
 
     private void setLoadMore() {
         adapter.setOnLoadMoreListener(() -> {
-            if (isFetching) {
-                UiUtils.showSnack(rootView, R.string.is_loading);
-                return;
+            if (!isFetching) {
+                if (isMaxPage()) {
+                    adapter.loadMoreEnd();
+                } else {
+                    fetch();
+                    isFetching = true;
+                }
             }
-            if (isMaxPage()) {
-                adapter.loadMoreEnd();
-            } else {
-                fetch();
-                isFetching = true;
-            }
+
         }, recyclerView);
     }
 

@@ -105,6 +105,8 @@ public class DataBase {
         RealmResults<Image> images;
         if (type.equals("anime")) {
             images = realm.where(Image.class).equalTo("big", true).findAll();
+        } else if (type.equals(Constants.FAVORITE)) {
+            images = findFavoriteImages(realm);
         } else {
             images = realm.where(Image.class).equalTo(Constants.TYPE, type).findAll();
         }
@@ -116,5 +118,9 @@ public class DataBase {
         Realm realm = Realm.getDefaultInstance();
 
         return realm.where(Image.class).equalTo(Constants.URL, url).findFirst();
+    }
+
+    public static boolean noCache() {
+        return SpUtil.getString(Constants.CACHE_STRATEGY, "0").equals("0");
     }
 }

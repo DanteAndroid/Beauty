@@ -97,6 +97,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private Updater updater;
     private boolean secretMode;
     private int placeHolderHeight;
+    private boolean erciyuanHome;
 
     @Override
     protected int initLayoutId() {
@@ -108,6 +109,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         super.initViews(savedInstanceState);
         secretMode = SpUtil.getBoolean(SettingFragment.SECRET_MODE) ||
                 DataBase.isVIP(SpUtil.getString("deviceId"));
+        erciyuanHome = SpUtil.getBoolean(SettingFragment.ERCIYUAN_HOME);
         setupDrawer();
         initToolbar();
         updater = Updater.getInstance(this);
@@ -135,7 +137,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         animator.addUpdateListener(animation -> {
             ViewGroup.LayoutParams layoutParams = toolbar.getLayoutParams();
             layoutParams.height = (int) animation.getAnimatedValue();
-            Log.d(TAG, "collapseToolbar: " + layoutParams.height);
             toolbar.setLayoutParams(layoutParams);
 
         });
@@ -241,7 +242,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             //favorite
             fragmentSparseArray.put(R.id.nav_favorite, new FavoriteFragment());
         }
-        setMainFragment(R.id.nav_beauty, fragmentSparseArray, savedInstanceState == null);
+        setMainFragment(erciyuanHome ? R.id.nav_a : R.id.nav_beauty, fragmentSparseArray, savedInstanceState == null);
     }
 
     private void setupDrawer() {
@@ -304,21 +305,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         });
         navView.setNavigationItemSelectedListener(this);
         boolean isSecretOn = SpUtil.getBoolean(SettingFragment.SECRET_MODE);
-        navView.inflateMenu(R.menu.menu_main);
+        navView.inflateMenu(erciyuanHome ? R.menu.menu_erciyuan : R.menu.menu_main);
 //        navView.setCheckedItem(R.id.nav_beauty);
         Menu menu = navView.getMenu();
         menu.getItem(0).setChecked(true);
-        menu.getItem(0).setIcon(new IconicsDrawable(this).
-                icon(GoogleMaterial.Icon.gmd_home)
+        menu.findItem(R.id.nav_beauty).setIcon(new IconicsDrawable(this).
+                icon(GoogleMaterial.Icon.gmd_whatshot)
                 .color(ContextCompat.getColor(this, R.color.pink)));
 
-        menu.getItem(1).setIcon(new IconicsDrawable(this)
-                .icon(GoogleMaterial.Icon.gmd_border_color));
+        menu.findItem(R.id.nav_a).setIcon(new IconicsDrawable(this)
+                .icon(GoogleMaterial.Icon.gmd_image));
 
-        menu.getItem(2).setIcon(new IconicsDrawable(this)
+        menu.findItem(R.id.nav_mz).setIcon(new IconicsDrawable(this)
                 .icon(GoogleMaterial.Icon.gmd_face)
                 .color(Color.RED));
-        menu.getItem(3).setIcon(new IconicsDrawable(this)
+        menu.findItem(R.id.nav_favorite).setIcon(new IconicsDrawable(this)
                 .icon(GoogleMaterial.Icon.gmd_favorite)
                 .color(Color.RED));
 
@@ -386,7 +387,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onDestroy() {
         updater.release();
-        if (isMoreThanDaysOf(3) && SpUtil.getBoolean("regularly_clear")) {
+        int d = Integer.parseInt(SpUtil.getString(Constants.CACHE_STRATEGY, "0"));
+        if (d > 0 && isMoreThanDaysOf(d)) {
             DataBase.clearAllImages();
             SpUtil.save(Constants.CLEAR_DATE, new Date().getTime());
         }

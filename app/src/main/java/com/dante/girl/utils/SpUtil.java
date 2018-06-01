@@ -45,6 +45,10 @@ public class SpUtil {
         return sp.getString(key, "");
     }
 
+    public static String getString(String key, String def) {
+        return sp.getString(key, def);
+    }
+
     public static int getInt(String key) {
         return sp.getInt(key, 0);
     }

@@ -65,11 +65,15 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
         currentPosition = position;
         List<Fragment> fragments = new ArrayList<>();
 
-        type = getIntent().getStringExtra(Constants.TYPE);
-        images = DataBase.findImages(realm, type);
+        if (DataBase.noCache()) {
+            images = getIntent().getParcelableArrayListExtra(Constants.DATA);
+        } else {
+            type = getIntent().getStringExtra(Constants.TYPE);
+            images = DataBase.findImages(realm, type);
+        }
 
         for (int i = 0; i < images.size(); i++) {
-            fragments.add(ViewerFragment.newInstance(images.get(i).url));
+            fragments.add(ViewerFragment.newInstance(images.get(i)));
         }
         adapter = new DetailPagerAdapter(getSupportFragmentManager(), fragments);
         pager.setAdapter(adapter);

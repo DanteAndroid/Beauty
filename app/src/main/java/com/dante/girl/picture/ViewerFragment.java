@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -61,10 +60,10 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
     private String url;
     private Image image;
 
-    public static ViewerFragment newInstance(String i) {
+    public static ViewerFragment newInstance(@NonNull Image i) {
         ViewerFragment fragment = new ViewerFragment();
         Bundle args = new Bundle();
-        args.putString(Constants.URL, i);
+        args.putParcelable(Constants.DATA, i);
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,18 +76,22 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
     @Override
     protected void initViews() {
         context = (ViewerActivity) getActivity();
-        url = getArguments().getString(Constants.URL);
-        image = DataBase.getByUrl(realm, url);
+        if (getArguments() == null) return;
+        image = getArguments().getParcelable(Constants.DATA);
+        if (image == null) return;
+        url = image.url;
         ViewCompat.setTransitionName(imageView, url);
         load();
-        likeBtn.setLiked(DataBase.getByUrl(realm, url).isLiked);
+        if (DataBase.getByUrl(realm, url) != null) {
+            likeBtn.setLiked(DataBase.getByUrl(realm, url).isLiked);
+        }
         likeBtn.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
                 realm.beginTransaction();
-                DataBase.getByUrl(realm, url).setLiked(true);
+                image.setLiked(true);
+                realm.copyToRealmOrUpdate(image);
                 realm.commitTransaction();
-
                 if (SpUtil.getBoolean(SettingFragment.LIKE_DOWNLOAD, true)) {
                     save(bitmap);
                 }
@@ -105,7 +108,6 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
 
 
     private void load() {
-        Log.d(TAG, "load: " + url);
         Imager.loadDefer(this, image, new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {

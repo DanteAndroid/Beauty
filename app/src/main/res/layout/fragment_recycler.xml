@@ -17,7 +17,6 @@
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:alpha="0"
             android:padding="@dimen/item_margin"
             android:scrollbars="vertical"
             tools:listitem="@layout/picture_item"/>

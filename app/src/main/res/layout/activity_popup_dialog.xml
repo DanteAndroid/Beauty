@@ -32,6 +32,7 @@
             android:autoLink="email"
             android:lineSpacingMultiplier="1.2"
             android:padding="30dp"
+            android:textSize="16sp"
             android:text="@string/thanks_for_donation"
             android:textColor="@android:color/primary_text_light"
         />

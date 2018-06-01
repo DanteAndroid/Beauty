@@ -36,4 +36,15 @@
         <item name="mz_jp">Japan</item>
         <item name="mz_tw">Taiwan</item>
     </string-array>
+
+    <string-array name="cache_strategy">
+        <item name="none">Refresh each time(no record for position of browse)</item>
+        <item name="three">Use cache, clear every 3 days</item>
+        <item name="week">Use cache, clear every week</item>
+    </string-array>
+    <string-array name="cache_strategy_value">
+        <item name="none">0</item>
+        <item name="three">3</item>
+        <item name="week">7</item>
+    </string-array>
 </resources>

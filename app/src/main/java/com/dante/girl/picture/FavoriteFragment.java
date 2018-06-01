@@ -1,11 +1,10 @@
 package com.dante.girl.picture;
 
 import android.support.design.widget.AppBarLayout;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
 
 import com.dante.girl.R;
 import com.dante.girl.base.Constants;
+import com.dante.girl.model.DataBase;
 import com.dante.girl.utils.UiUtils;
 
 /**
@@ -36,15 +35,18 @@ public class FavoriteFragment extends PictureFragment {
 
     @Override
     protected void initData() {
-        imageType = Constants.FAVORITE;
         super.initData();
+        imageType = Constants.FAVORITE;
+        images = DataBase.findImages(realm, imageType);
+        data = realm.copyFromRealm(images);
+        adapter.setNewData(images);
         if (images.isEmpty()) {
             if (isHidden()) {
                 return;
             }
             UiUtils.showSnack(rootView, R.string.images_empty);
         }
-        adapter.setEmptyView(LayoutInflater.from(context).inflate(R.layout.empty, (ViewGroup) rootView, false));
+        adapter.setEmptyView(R.layout.empty);
     }
 
 

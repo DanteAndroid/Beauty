@@ -1,6 +1,8 @@
 package com.dante.girl.model;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -19,7 +21,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Image object for save in Realm database.
  */
-public class Image extends RealmObject {
+public class Image extends RealmObject implements Parcelable {
     private static final String TAG = "Image";
 
     public int id;
@@ -129,5 +131,55 @@ public class Image extends RealmObject {
 
     public void setLiked(boolean liked) {
         isLiked = liked;
+    }
+
+
+    public static final Parcelable.Creator<Image> CREATOR = new Parcelable.Creator<Image>() {
+        @Override
+        public Image createFromParcel(Parcel source) {
+            return new Image(source);
+        }
+
+        @Override
+        public Image[] newArray(int size) {
+            return new Image[size];
+        }
+    };
+
+    protected Image(Parcel in) {
+        this.id = in.readInt();
+        this.type = in.readString();
+        long tmpPublishedAt = in.readLong();
+        this.publishedAt = tmpPublishedAt == -1 ? null : new Date(tmpPublishedAt);
+        this.info = in.readString();
+        this.title = in.readString();
+        this.url = in.readString();
+        this.width = in.readInt();
+        this.height = in.readInt();
+        this.isLiked = in.readByte() != 0;
+        this.referer = in.readString();
+        this.big = in.readByte() != 0;
+        this.totalPage = in.readInt();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.type);
+        dest.writeLong(this.publishedAt != null ? this.publishedAt.getTime() : -1);
+        dest.writeString(this.info);
+        dest.writeString(this.title);
+        dest.writeString(this.url);
+        dest.writeInt(this.width);
+        dest.writeInt(this.height);
+        dest.writeByte(this.isLiked ? (byte) 1 : (byte) 0);
+        dest.writeString(this.referer);
+        dest.writeByte(this.big ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.totalPage);
     }
 }

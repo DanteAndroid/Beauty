@@ -2,12 +2,19 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
 >
     <PreferenceCategory android:title="@string/app">
-        <Preference
-            android:key="clear_cache"
-            android:summary="@string/set_current_cache"
-            android:title="@string/set_clear_cache"/>
+
+
         <ListPreference
             android:defaultValue="0"
+            android:entries="@array/cache_strategy"
+            android:entryValues="@array/cache_strategy_value"
+            android:key="cache_strategy"
+            android:summary="%s"
+            android:title="@string/cache_strategy"/>
+
+        <ListPreference
+            android:defaultValue="0"
+            android:enabled="false"
             android:entries="@array/image_type"
             android:entryValues="@array/image_type_value"
             android:key="random_splash"
@@ -15,13 +22,14 @@
             android:title="@string/original_splash"/>
         <SwitchPreference
             android:defaultValue="false"
-            android:key="regularly_clear"
-            android:summary="@string/regularly_clear_summary"
-            android:title="@string/regularly_clear"/>
+            android:key="erciyuan_home"
+            android:title="@string/erciyuan_home"/>
+
         <SwitchPreference
             android:defaultValue="true"
             android:key="like_download"
             android:title="@string/set_like_download"/>
+
 
     </PreferenceCategory>
 
@@ -30,6 +38,10 @@
             android:defaultValue="true"
             android:key="check_version"
             android:title="@string/set_check_version"/>
+        <Preference
+            android:key="clear_cache"
+            android:summary="@string/set_current_cache"
+            android:title="@string/set_clear_cache"/>
         <EditTextPreference
             android:key="feedback"
             android:summary="@string/feedback_description"

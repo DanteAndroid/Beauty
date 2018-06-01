@@ -36,6 +36,15 @@ public class AppInfo {
     @SerializedName("share_app_description")
     private String shareApp;
     private List<String> vip;
+    private String announcement;
+
+    public String getAnnouncement() {
+        return announcement;
+    }
+
+    public void setAnnouncement(String announcement) {
+        this.announcement = announcement;
+    }
 
     @Override
     public String toString() {

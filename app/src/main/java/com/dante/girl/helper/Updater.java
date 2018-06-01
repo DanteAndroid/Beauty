@@ -3,6 +3,7 @@ package com.dante.girl.helper;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.text.TextUtils;
 
 import com.blankj.utilcode.utils.EncryptUtils;
 import com.blankj.utilcode.utils.PhoneUtils;
@@ -31,6 +32,7 @@ import rx.subscriptions.CompositeSubscription;
 
 public class Updater {
     public static final String SHARE_APP = "share_app";
+    public static final String SHOULD_SHOW_ANNOUNCEMENT = "shouldShowAnnouncement";
     private static final String TAG = "Updater";
     private static CompositeSubscription compositeSubscription = new CompositeSubscription();
     private final Activity context;
@@ -77,6 +79,7 @@ public class Updater {
 
         NetService.getInstance(API.GITHUB_RAW).getAppApi().getAppInfo()
                 .filter(appInfo -> {
+                    showAnnouncement(appInfo);
                     SpUtil.save("vip", Arrays.toString(appInfo.getVip().toArray()));
                     return appInfo.getVersionCode() > BuildConfig.VERSION_CODE;//版本有更新
                 })
@@ -84,6 +87,20 @@ public class Updater {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::showDialog, Throwable::printStackTrace);
+    }
+
+    private void showAnnouncement(AppInfo appInfo) {
+        if (TextUtils.isEmpty(appInfo.getAnnouncement())
+                || !SpUtil.getBoolean(appInfo.getAnnouncement() + SHOULD_SHOW_ANNOUNCEMENT, true)) {
+            return;
+        }
+
+        if (context.isFinishing()) return;
+        context.runOnUiThread(() -> new AlertDialog.Builder(context)
+                .setMessage(appInfo.getAnnouncement())
+                .setPositiveButton(R.string.got_it,
+                        (dialog, which) -> SpUtil.save(appInfo.getAnnouncement() + SHOULD_SHOW_ANNOUNCEMENT, false))
+                .show());
     }
 
     private void showDialog(final AppInfo appInfo) {

@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.design.widget.Snackbar;
@@ -50,6 +51,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
     public static final String ABOUT = "about";
     private static final long DURATION = 300;
     private static final String TAG = "SettingFragment";
+    public static final java.lang.String ERCIYUAN_HOME = "erciyuan_home";
     private Preference clearCache;
     private EditTextPreference feedback;
     private Preference version;
@@ -60,6 +62,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
     private long startTime;
     private boolean first = true;
     private int secretIndex;
+    private ListPreference cacheStrategy;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,7 +79,12 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
             SplashActivity.updateSplash((String) o, true);
             return true;
         });
-
+        cacheStrategy = (ListPreference) findPreference(Constants.CACHE_STRATEGY);
+        cacheStrategy.setOnPreferenceChangeListener((preference, newValue) -> {
+            App.noCache = newValue.equals("0");
+            splash.setEnabled(!newValue.equals("0"));
+            return true;
+        });
 
         about.setOnPreferenceClickListener(preference -> {
             new RxPermissions(getActivity()).request(Manifest.permission.READ_PHONE_STATE)

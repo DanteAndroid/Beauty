@@ -40,10 +40,7 @@
     <string name="share_app">分享应用</string>
     <string name="tips">贴士</string>
     <string name="tips_content">浏览到下方时，点击标题栏可以快速返回顶部</string>
-
     <string name="gank" translatable="false">Gank</string>
-
-
     <string name="nav_secret_mode" translatable="false">XXOO</string>
     <string name="secret_mode_opened">隐藏模式已打开，我们一起嘿嘿嘿~</string>
     <string name="secret_mode_closed">隐藏模式已关闭。</string>
@@ -77,7 +74,7 @@
     <string name="images_empty">啊哦，没有内容，赶快去收藏吧~</string>
     <string name="set_like_download">收藏时保存图片</string>
     <string name="empty_content">啥也没有</string>
-    <string name="thanks_for_donation">成为VIP后可以开启更多福利图区（6元）\n\n为什么要捐赠？\n- 服务器运行需要成本\n-
+    <string name="thanks_for_donation">成为VIP后可以开启更多福利图区（8元）\n\n为什么要捐赠？\n- 服务器运行需要成本\n-
         开发app耗费开发者的时间和精力\n-
         您的捐赠会让app变得更好用
     </string>
@@ -103,7 +100,7 @@
     <string name="deviceid">设备标识</string>
     <string name="copy">点击复制后，转账时备注设备标识，捐赠完毕等待一段时间即可开启隐藏模式</string>
     <string name="permission_statement">拒绝电话权限将无法获取设备标识以开启隐藏图区（需要捐赠）</string>
-    <string name="device_id_copied">设备标识已复制，请转账6元，在备注粘贴标识，捐赠完毕请耐心等待~</string>
+    <string name="device_id_copied">设备标识已复制，请转账8元，在备注粘贴标识，捐赠完毕请耐心等待~</string>
     <string name="go_market">去市场</string>
     <string name="thanks_for_feedback">感谢您的反馈</string>
     <string name="you_are_vip">恭喜，您已经是VIP用户，再次感谢支持！</string>
@@ -115,5 +112,9 @@
     <string name="no_picture_maybe_need_login">无法解析图片，可能因为需要登录</string>
     <string name="hide">隐藏图区</string>
     <string name="type_hide_hint">大量隐藏图区捐赠后可见</string>
+    <string name="cache_strategy">缓存策略</string>
+    <string name="cache_strategy_summary">是否使用缓存以及何时清理缓存</string>
+    <string name="got_it">知道了</string>
+    <string name="erciyuan_home">二次元图区作为主页</string>
 
 </resources>

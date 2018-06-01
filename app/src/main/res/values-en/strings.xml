@@ -115,4 +115,8 @@
     <string name="no_picture_maybe_need_login">Uable to parse pictures, login may be needed</string>
     <string name="hide">Hidden zone</string>
     <string name="type_hide_hint">Visible after donation</string>
+    <string name="cache_strategy">Cache strategy</string>
+    <string name="cache_strategy_summary">If use cache or when to clear cache</string>
+    <string name="got_it">Got it</string>
+    <string name="erciyuan_home">Two dimension as home</string>
 </resources>

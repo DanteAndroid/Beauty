@@ -10,8 +10,8 @@ android {
         applicationId "com.dante.girl"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 21
-        versionName "1.2.6"
+        versionCode 24
+        versionName "1.2.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
 
@@ -88,4 +88,6 @@ dependencies {
 //    implementation 'com.github.garretyoder:Colorful:1.1'//Theme color
     implementation 'com.jakewharton.timber:timber:4.4.0'//log
     implementation 'com.github.anrwatchdog:anrwatchdog:1.3.0'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 }

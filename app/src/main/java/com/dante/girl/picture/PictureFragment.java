@@ -14,6 +14,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.dante.girl.MainActivity;
 import com.dante.girl.R;
+import com.dante.girl.base.App;
 import com.dante.girl.base.BaseActivity;
 import com.dante.girl.base.Constants;
 import com.dante.girl.model.DataBase;
@@ -21,6 +22,9 @@ import com.dante.girl.model.Image;
 import com.dante.girl.ui.SettingFragment;
 import com.dante.girl.utils.SpUtil;
 import com.dante.girl.utils.UiUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.RealmResults;
 
@@ -40,6 +44,8 @@ public abstract class PictureFragment extends RecyclerFragment {
     StaggeredGridLayoutManager layoutManager;
     PictureAdapter adapter;
     RealmResults<Image> images;
+    List<Image> data;
+    boolean noCache;
 
     @Override
     public void onDestroyView() {
@@ -48,8 +54,10 @@ public abstract class PictureFragment extends RecyclerFragment {
 
     @Override
     public void onPause() {
-        firstPosition = layoutManager.findFirstVisibleItemPositions(new int[layoutManager.getSpanCount()])[0];
-        SpUtil.save(imageType + Constants.POSITION, firstPosition);
+        firstPosition = layoutManager.findLastCompletelyVisibleItemPositions(new int[layoutManager.getSpanCount()])[0];
+        if (firstPosition > 0) {
+            SpUtil.save(imageType + Constants.POSITION, firstPosition);
+        }
         super.onPause();
     }
 
@@ -67,6 +75,7 @@ public abstract class PictureFragment extends RecyclerFragment {
         adapter = new PictureAdapter(initAdapterLayout(), this);
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         recyclerView.setAdapter(adapter);
+        adapter.bindToRecyclerView(recyclerView);
         RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
         if (animator instanceof SimpleItemAnimator) {
             ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
@@ -103,6 +112,9 @@ public abstract class PictureFragment extends RecyclerFragment {
         Intent intent = new Intent(context.getApplicationContext(), ViewerActivity.class);
         intent.putExtra(Constants.TYPE, imageType);
         intent.putExtra(Constants.POSITION, position);
+        if (noCache) {
+            intent.putParcelableArrayListExtra(Constants.DATA, (ArrayList<Image>) data);
+        }
 
         ActivityOptionsCompat options = ActivityOptionsCompat
                 .makeSceneTransitionAnimation(context, view, adapter.getData().get(position).url);
@@ -129,10 +141,14 @@ public abstract class PictureFragment extends RecyclerFragment {
 
     @Override
     protected void initData() {
-        images = DataBase.findImages(realm, imageType);
-        adapter.setNewData(images);
-        recyclerView.animate().alpha(1)
-                .setStartDelay(200).start();
+        noCache = App.noCache;
+        if (noCache) {
+            data = new ArrayList<>();
+            adapter.setNewData(data);
+        } else {
+            images = DataBase.findImages(realm, imageType);
+            adapter.setNewData(images);
+        }
     }
 
     private void initFab() {
@@ -162,7 +178,7 @@ public abstract class PictureFragment extends RecyclerFragment {
 
     @Override
     public void onRefresh() {
-        page = 1;
+        refresh = true;
         fetch();
         if (adapter.isLoading()) {
             changeRefresh(false);

@@ -36,5 +36,15 @@
         <item name="mz_jp">日本美女</item>
         <item name="mz_tw">台湾美女</item>
     </string-array>
+    <string-array name="cache_strategy">
+        <item name="none">不缓存(不记录浏览位置)</item>
+        <item name="three">缓存保留三天</item>
+        <item name="week">缓存保留一周</item>
+    </string-array>
+    <string-array name="cache_strategy_value">
+        <item name="none">0</item>
+        <item name="three">3</item>
+        <item name="week">7</item>
+    </string-array>
 
 </resources>

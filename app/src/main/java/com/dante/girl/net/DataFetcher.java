@@ -158,7 +158,6 @@ public class DataFetcher {
         Elements posts = document.select("div[ref=postList] div[class=pos-r pd10 post-list box mar10-b content-card grid-item]");
 
 //                            final int size = elements.size();
-        Log.i(TAG, "getPosts: " + type + posts.size());
 //                            String url = elements.last().select("img").first().attr("src");
 //                            if (DataBase.getByUrl(url) != null) {
 //                                Log.i(TAG, "getPosts: find saved image!");
@@ -293,9 +292,9 @@ public class DataFetcher {
 //            src = src.replace("!acgfiindex", "");
 //
 //        } else if (!src.endsWith(".jpg") && !src.endsWith("png")) {
-//            if (src.contains(".jpg")) {
+//            if (src.getNewData(".jpg")) {
 //                src = src.substring(0, src.lastIndexOf(".jpg") + 4);
-//            } else if (src.contains(".png")) {
+//            } else if (src.getNewData(".png")) {
 //                src = src.substring(0, src.lastIndexOf(".png") + 4);
 //            }
 //        }

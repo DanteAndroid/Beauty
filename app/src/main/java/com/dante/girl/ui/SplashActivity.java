@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.dante.girl.MainActivity;
 import com.dante.girl.R;
+import com.dante.girl.base.App;
 import com.dante.girl.base.Constants;
 import com.dante.girl.model.DataBase;
 import com.dante.girl.model.Image;
@@ -32,13 +34,19 @@ public class SplashActivity extends AppCompatActivity {
             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
     private static String type;
+    private boolean noCache;
 
     public static void updateSplash(String type, boolean force) {
         Date now = new Date();
         boolean needUpdate = lastUpdateIsTenMinBefore();
         if (needUpdate || force) {
+            if (App.noCache) {
+                type = Constants.FAVORITE;
+            }
             String url = DataBase.getRandomImage(type);
+            Log.d(TAG, "updateSplash: ");
             if (TextUtils.isEmpty(url)) {
+                Log.d(TAG, "updateSplash: no picture");
                 return;
             }
             SpUtil.save(Constants.DATE, now.getTime());
@@ -63,6 +71,7 @@ public class SplashActivity extends AppCompatActivity {
         if (type.equals("origin")) {
             getWindow().setBackgroundDrawableResource(R.drawable.splash);
             startAppDelay(SPLASH_DURATION_SHORT);
+
         } else {
             updateSplash(type, false);
             loadImage();
