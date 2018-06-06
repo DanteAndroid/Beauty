@@ -119,7 +119,7 @@ public class CustomPictureFragment extends PictureFragment {
             case TYPE_A_UNIFORM:
             case TYPE_A_YSJ:
                 isPostSite = true;
-                layout = R.layout.post_item_a;
+                layout = R.layout.post_item;
                 if (inPicturePost) {
                     layout = R.layout.picture_item_fixed;
                 }
@@ -202,6 +202,7 @@ public class CustomPictureFragment extends PictureFragment {
                 .flatMap(Observable::from)
                 .map(image -> {
                     if ((isGank | isDB) && image.width == 0) {
+                        log("getFixedImage"+imageType);
                         try {
                             image = Image.getFixedImage(this, image, imageType);
                             if (!isGank && !DataBase.hasImage(image.url) && image.publishedAt == null) {

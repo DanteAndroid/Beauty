@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:tools="http://schemas.android.com/tools"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="3dp"
+                                    android:foreground="?attr/selectableItemBackgroundBorderless">
+    <ImageView
+        android:id="@+id/picture"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        tools:ignore="ContentDescription"/>
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:maxLines="2"
+              android:text="這是一個很長很長的測試標題"/>
+
+</android.support.v7.widget.CardView>

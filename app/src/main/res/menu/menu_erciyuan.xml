@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_a"
+            android:title="@string/nav_a_zone"/>
+        <item
+            android:id="@+id/nav_beauty"
+            android:title="@string/nav_beauty"/>
+        <item
+            android:id="@+id/nav_mz"
+            android:title="@string/nav_mz"/>
+        <item
+            android:id="@+id/nav_favorite"
+            android:title="@string/favorite"/>
+
+    </group>
+
+    <item android:title="@string/app">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:title="@string/menu_share"/>
+            <item
+                android:id="@+id/nav_setting"
+                android:title="@string/menu_settings"/>
+        </menu>
+    </item>
+
+</menu>
