@@ -1,10 +1,15 @@
 {
-	"lastest_version": "v1.2.8",
-	"lastest_version_code": 24,
+	"lastest_version": "v1.3.0",
+	"lastest_version_code": 26,
 	"former_version": "v1.2.6",
 	"forceUpdate": true,
 	"announcement":"提示：\n\n本版本更新了几个重要的自定义设置，请到设置里查看",
-	"message": " -添加了不缓存模式\n - 新的自定义设置",
+
+  
+    
+      
+    
+  	"message": " -修复隐藏图区不能显示的问题n - 新的自定义设置",
 	"share_app_description": "这个软件不错，图片适合做壁纸。",
 	"apk_name":"app-armeabi-v7a-release.apk",
 	"vip":[ "67B6DF845280BEFA66729AAE3760D0CA", "75BF6E246958460F2F81E943B38E1EE7", "6579ECEFB2E8072093AA89EAE86D95A5"
